@@ -1,0 +1,28 @@
+<form #form="ngForm" (ngSubmit)="submit()">
+  <mat-form-field>
+    <mat-select placeholder="Day" [(ngModel)]="day" name="day">
+      <mat-option *ngFor="let day of days" [value]="day">{{ day }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [matDatepicker]="datepicker" [(ngModel)]="date" name="date" placeholder="Date" />
+    <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+    <mat-datepicker #datepicker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Time" [(ngModel)]="time" name="time">
+      <mat-option *ngFor="let time of times" [value]="time">{{ time }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Team 1" [(ngModel)]="team1Id" name="team1Id">
+      <mat-option *ngFor="let team of teams" [value]="team.name">{{ team.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Team 2" [(ngModel)]="team2Id" name="team2Id">
+      <mat-option *ngFor="let team of teams" [value]="team.name">{{ team.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button class="btn btn-primary mx-sm-3" type="submit">Add</button>
+</form>

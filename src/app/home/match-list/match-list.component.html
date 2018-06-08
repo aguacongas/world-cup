@@ -1,0 +1,37 @@
+<mat-grid-list cols="1">
+  <mat-list-item *ngFor="let date of dates">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-2">
+          {{ date | date }}
+          <p></p>
+        </div>
+        <div class="col-12 col-md-10">
+          <mat-grid-list cols="1">
+            <mat-list-item matLine *ngFor="let match of getMatches(date)">
+              <mat-form-field class="hour-sm">
+                <input matInput [value]="match.match.date.getHours() | time" name="time" disabled />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput [(ngModel)]="match.bet.score1" [placeholder]="match.match.result1.teamId" name="team1" type="number" [disabled]="matchStarted(match.match)" />
+                <input matInput class="result" *ngIf="matchStarted(match.match)" [(ngModel)]="match.match.result1.score" name="score1" type="number" disabled />
+              </mat-form-field>
+              <mat-form-field class="hour">
+                <input matInput [value]="match.match.date.getHours() | time" name="time" disabled />
+                <input matInput *ngIf="matchStarted(match.match)" disabled />
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput [(ngModel)]="match.bet.score2" [placeholder]="match.match.result2.teamId" name="team2" type="number" [disabled]="matchStarted(match.match)" />
+                <input matInput class="result" *ngIf="matchStarted(match.match)" [(ngModel)]="match.match.result2.score" name="score1" type="number" disabled />
+              </mat-form-field>
+              <mat-form-field *ngIf="matchStarted(match.match)">
+                  <input matInput disabled placeholder="points" value=" " />
+                  <input matInput class="result" [(ngModel)]="match.point" name="score1" type="number" disabled />
+                </mat-form-field>
+              </mat-list-item>
+          </mat-grid-list>
+        </div>
+      </div>
+    </div>
+  </mat-list-item>
+</mat-grid-list>

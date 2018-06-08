@@ -1,0 +1,27 @@
+.mat-grid-list {
+  padding-top: 20px;
+}
+.hour {
+  text-align: center;
+}
+.hour-sm {
+  display: none;
+}
+.result {
+  color: #000;
+}
+@media (max-width: 992px) {
+  .hour {
+    display: none;
+  }
+  .hour-sm {
+    display: inherit;
+  }
+  form {
+    display: flex !important;
+    flex-direction: column;
+  }
+  form > * {
+    width: 100%;
+  }
+}

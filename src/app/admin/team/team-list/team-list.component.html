@@ -1,0 +1,11 @@
+<wc-add-team></wc-add-team>
+<mat-grid-list cols="4">
+  <mat-grid-tile *ngFor="let group of groups">
+    <div>
+      Group {{ group }}
+      <mat-list>
+        <mat-list-item *ngFor="let team of getGroup(group)">{{ team }}</mat-list-item>
+      </mat-list>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>

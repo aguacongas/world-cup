@@ -1,0 +1,11 @@
+.mat-tab-group {
+  overflow-x: auto;
+}
+.container {
+  padding-top: 20px;
+  overflow: hidden;
+}
+.mat-card-content {
+  padding-top: 20px;
+}
+
