@@ -3,14 +3,14 @@
     <div class="row">
       <div class="col-12 col-md-10">
         Pronostique pour du beure sur la coupe du monde 2018 en Russie.
-        <div *ngIf="!user">
+        <div *ngIf="!user" class="login">
           <p>
             Connecte toi avec:
           </p>
           <button mat-raised-button color="primary" (click)="login('Google')">Google</button>
           <button mat-raised-button color="primary" (click)="login('Facebook')">Facebook</button>
           <button mat-raised-button color="primary" (click)="login('Twitter')">Twitter</button>
-          <button mat-raised-button color="primary" (click)="login('Github')">Github</button>
+          <!-- <button mat-raised-button color="primary" (click)="login('Github')">Github</button> -->
         </div>
       </div>
       <div class="col-6 col-md-2" *ngIf="user">

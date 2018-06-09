@@ -8,4 +8,8 @@
 .mat-card-content {
   padding-top: 20px;
 }
+.login > .mat-raised-button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
 
