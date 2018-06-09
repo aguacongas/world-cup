@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { Match } from '../../model/match';
 import { UserBet } from '../model/user-bet';
+import { ScoreService } from './../../score.service';
 
 @Component({
   selector: 'wc-match-list',
@@ -19,10 +20,8 @@ export class MatchListComponent implements OnInit {
 
     this.bets.forEach(bet => {
       const match = bet.match;
-      match.date = new Date(match.date);
-      if (match.date < new Date()) {
-        bet.point = this.calcResult(bet);
-      }
+      bet.point = this.scoreService.calcResult(bet);
+
       if (!this.dates.find(d => d.getFullYear() === match.date.getFullYear()
         && d.getMonth() === match.date.getMonth()
         && d.getDate() === match.date.getDate())) {
@@ -35,7 +34,7 @@ export class MatchListComponent implements OnInit {
 
   private bets: UserBet[];
 
-  constructor() {
+  constructor(private scoreService: ScoreService) {
   }
 
   ngOnInit() {
@@ -49,31 +48,5 @@ export class MatchListComponent implements OnInit {
 
   matchStarted(match: Match): boolean {
     return match.date < new Date();
-  }
-
-  private calcResult(userBet: UserBet): number {
-    const bet = userBet.bet;
-    if (bet.score1 || bet.score1 === 0 && bet.score2 || bet.score2 === 0) {
-      const match = userBet.match;
-      const score1 = match.result1.score;
-      const score2 = match.result2.score;
-      if (score1 === bet.score1 && score2 === bet.score2) {
-        return 3;
-      }
-      if (score1 === score2 && bet.score1 === bet.score2) {
-        return 1;
-      }
-      if (score1 === score2 && bet.score1 === bet.score2) {
-        return 1;
-      }
-      if (score1 > score2 && bet.score1 > bet.score2) {
-        return 1;
-      }
-      if (score1 < score2 && bet.score1 < bet.score2) {
-        return 1;
-      }
-    }
-
-    return 0;
   }
 }

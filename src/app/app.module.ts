@@ -28,6 +28,7 @@ import { environment } from '../environments/environment';
 import { HomeComponent } from './home/home.component';
 import { MatchListComponent } from './home/match-list/match-list.component';
 import { PipeModule } from './pipe/pipe.module';
+import { ScoreService } from './score.service';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { PipeModule } from './pipe/pipe.module';
       useFactory: boot,
       deps: [AngularFireAuth],
       multi: true
-    }
+    },
+    ScoreService
   ],
   bootstrap: [AppComponent]
 })

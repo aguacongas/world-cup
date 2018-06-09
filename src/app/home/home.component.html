@@ -2,10 +2,19 @@
   <form #form="ngForm" (ngSubmit)="submit()">
     <div class="row">
       <div class="col-12 col-md-10">
-        Parie pour du beure sur la coupe du monde 2018 en Russie.
+        Pronostique pour du beure sur la coupe du monde 2018 en Russie.
+        <div *ngIf="!user">
+          <p>
+            Connecte toi avec:
+          </p>
+          <button mat-raised-button color="primary" (click)="login('Google')">Google</button>
+          <button mat-raised-button color="primary" (click)="login('Facebook')">Facebook</button>
+          <button mat-raised-button color="primary" (click)="login('Twitter')">Twitter</button>
+          <button mat-raised-button color="primary" (click)="login('Github')">Github</button>
+        </div>
       </div>
-      <div class="col-6 col-md-2">
-        <button mat-raised-button color="primary" [disabled]="!user" type="submit">Enregistrer</button>
+      <div class="col-6 col-md-2" *ngIf="user">
+        <button mat-raised-button color="primary" type="submit">Enregistrer</button>
       </div>
     </div>
     <mat-card-content>
@@ -18,8 +27,8 @@
       </mat-tab-group>
     </mat-card-content>
     <div class="row justify-content-end">
-      <div class="col-md-2">
-        <button mat-raised-button color="primary" [disabled]="!user" type="submit">Enregistrer</button>
+      <div class="col-md-2" *ngIf="user">
+        <button mat-raised-button color="primary" type="submit">Enregistrer</button>
       </div>
     </div>
   </form>

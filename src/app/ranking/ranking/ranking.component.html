@@ -1,0 +1,26 @@
+<mat-card>
+  <p>
+    Si tu trouves le score du match tu gagnes
+    <b>3 points</b>.
+  </p>
+  <p>
+    Si tu trouves le vainqueur du match tu gagnes
+    <b>1 points</b>.
+  </p>
+  <p>
+    Le 1er gagne <b>toute mon estime</b>.
+  </p>
+  <mat-grid-list col="1">
+    <mat-list-item matLine *ngFor="let rank of scores">
+      <div class="row">
+        <div class="col-1">
+            <b>{{ rank.rank }}</b>
+        </div>
+        <div class="col-3">{{ rank.userName }}</div>
+        <div class="col-1"><b>{{ rank.score }}</b></div>
+        <div class="col" *ngIf="rank.score > 1">points</div>
+        <div class="col" *ngIf="rank.score <= 1">point</div>
+      </div>
+    </mat-list-item>
+  </mat-grid-list>
+</mat-card>

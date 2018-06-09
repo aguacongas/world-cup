@@ -1,10 +1,11 @@
 
 <div class="container">
   <mat-toolbar>
-    <button class="title mr-auto" mat-button (click)="navigate('home')">FIFA World Cup 2018 BET</button>
+    <button class="title" mat-button (click)="navigate('home')">Pronostics World Cup 2018</button>
+    <button mat-button (click)="navigate('home')">Pronostics</button>
+    <button class="mr-auto" mat-button (click)="navigate('rank')">Scores</button>
     <ul class="nav">
       <li class="nav-item">
-          <button mat-button *ngIf="!userName" (click)="login()">Login</button>
           <button mat-button *ngIf="userName" [matMenuTriggerFor]="userMenu">{{userName}}</button>
           <mat-menu #userMenu="matMenu">
             <button mat-menu-item (click)="logout()">Logout</button>

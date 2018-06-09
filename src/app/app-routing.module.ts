@@ -10,6 +10,10 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
+    path: 'rank',
+    loadChildren: './ranking/ranking.module#RankingModule',
+  },
+  {
     path: 'admin',
     loadChildren: './admin/admin.module#AdminModule',
     canActivate: [AdminGuardService]

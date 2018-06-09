@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { FirebaseAuth } from 'angularfire2';
-import { auth } from 'firebase/app';
 @Component({
   selector: 'wc-root',
   templateUrl: './app.component.html',
@@ -31,9 +30,5 @@ export class AppComponent {
 
   navigate(to: string): void {
     this.router.navigate([to]);
-  }
-
-  login() {
-    this.auth.signInWithRedirect(new auth.GoogleAuthProvider());
   }
 }
