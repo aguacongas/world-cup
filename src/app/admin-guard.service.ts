@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 
+import { bdd } from '../environments/bdd';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,7 +13,7 @@ export class AdminGuardService {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const user = this.authService.auth.currentUser;
-    const result = user && user.email === 'aguacongas@gmail.com';
+    const result = user && user.email === bdd.admin;
     if (!result) {
       this.router.navigate(['login']);
     }

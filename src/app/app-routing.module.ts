@@ -14,6 +14,10 @@ const routes: Routes = [
     loadChildren: './ranking/ranking.module#RankingModule',
   },
   {
+    path: 'about',
+    loadChildren: './about/about.module#AboutModule',
+  },
+  {
     path: 'admin',
     loadChildren: './admin/admin.module#AdminModule',
     canActivate: [AdminGuardService]

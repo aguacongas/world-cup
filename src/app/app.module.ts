@@ -24,7 +24,7 @@ import { MatToolbarModule,
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { environment } from '../environments/environment';
+import { bdd } from '../environments/bdd';
 import { HomeComponent } from './home/home.component';
 import { MatchListComponent } from './home/match-list/match-list.component';
 import { PipeModule } from './pipe/pipe.module';
@@ -40,7 +40,7 @@ import { ScoreService } from './score.service';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireModule.initializeApp(bdd.firebase),
     AngularFireAuthModule,
     AngularFireDatabaseModule,
     AppRoutingModule,
