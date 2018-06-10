@@ -1,5 +1,8 @@
 <mat-card>
-  <form #form="ngForm" (ngSubmit)="submit()">
+  <div *ngIf="isIe">
+    Arf, t'as IE. Ben change de navigateur !
+  </div>
+  <form *ngIf="!isIe" #form="ngForm" (ngSubmit)="submit()">
     <div class="row">
       <div class="col-12 col-md-10">
         Pronostique pour du beure sur la coupe du monde 2018 en Russie.
