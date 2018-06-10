@@ -30,6 +30,7 @@ on_success:
 - cmd: git checkout gh-pages
 - cmd: IF EXIST latest ( rmdir /S /Q latest )
 - cmd: move dist\world-cup latest
+- cmd: copy latest\index.html .\
 - cmd: git add latest
 - cmd: git commit latest -m "Appveyor build succed %APPVEYOR_BUILD_NUMBER%"
 - cmd: git push

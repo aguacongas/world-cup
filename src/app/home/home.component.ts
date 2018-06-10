@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private bets: Bet[];
   private matches: Match[];
   private subscription: Subscription;
+  private setDisplayName = true;
 
   constructor(private authService: AngularFireAuth, private db: AngularFireDatabase) {
     this.isIe = window.navigator.userAgent.indexOf('MSIE ') > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./);
@@ -52,6 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
               if (bet.score1 || bet.score1 === 0 || bet.score2 || bet.score2 === 0) {
                 bet.matchId = action.key;
                 this.bets.push(bet);
+                this.setDisplayName = false;
               }
             });
             this.merge();
@@ -119,10 +121,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       console.error(e);
     }
 
-    try {
-      await this.db.list(`bets/${this.user.uid}`).set('displayName', this.user.displayName);
-    } catch (e) {
-      console.error(e);
+    if (this.setDisplayName) {
+      try {
+        await this.db.list(`bets/${this.user.uid}`).set('displayName', this.user.displayName);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 

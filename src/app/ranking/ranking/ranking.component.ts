@@ -15,6 +15,7 @@ import { ScoreService } from '../../score.service';
   styleUrls: ['./ranking.component.css']
 })
 export class RankingComponent implements OnInit, OnDestroy {
+  displayName: string;
   user: User;
   scores: Ranking[];
 
@@ -61,7 +62,14 @@ export class RankingComponent implements OnInit, OnDestroy {
                 score = score + bet.point;
               }
             });
-            this.scores.push({ rank: undefined, userName: data.displayName, score: score });
+            const isUser = change.key === this.user.uid;
+            if (isUser) {
+              this.displayName = data.displayName;
+            }
+            this.scores.push({ rank: undefined,
+              userName: data.displayName,
+              score: score,
+              isUser: isUser});
           });
 
           this.scores.sort((a, b) => a.score === b.score ? 0 : a.score > b.score ? -1 : 1);
@@ -70,7 +78,16 @@ export class RankingComponent implements OnInit, OnDestroy {
       });
     });
   }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  async submit() {
+    try {
+      await this.db.list(`bets/${this.user.uid}`).set('displayName', this.displayName)
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
