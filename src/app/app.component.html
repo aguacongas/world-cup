@@ -1,7 +1,7 @@
 <div class="container">
   <mat-toolbar>
-    <button class="title" mat-button (click)="navigate('home')">Pronostics World Cup 2018</button>
-    <button mat-button class="menu-bouton" (click)="navigate('home')">Pronostics</button>
+    <button class="title" mat-button (click)="navigate('world-cup')">Pronostics World Cup 2018</button>
+    <button mat-button class="menu-bouton" (click)="navigate('world-cup')">Pronostics</button>
     <button mat-button class="menu-bouton" (click)="navigate('rank')">Scores</button>
     <button mat-button class="mr-auto menu-bouton" (click)="navigate('about')">A propos</button>
     <button mat-button class="menu-bouton" *ngIf="userName" [matMenuTriggerFor]="userMenu">{{userName}}</button>
@@ -16,7 +16,7 @@
       </svg>
     </button>
     <mat-menu #burgerMenu="matMenu">
-      <button mat-menu-item (click)="navigate('home')">Pronostics</button>
+      <button mat-menu-item (click)="navigate('world-cup')">Pronostics</button>
       <button mat-menu-item (click)="navigate('rank')">Scores</button>
       <button mat-menu-item (click)="navigate('about')">A propos</button>
       <button *ngIf="isAdmin" mat-menu-item (click)="navigate('admin')">Admin</button>

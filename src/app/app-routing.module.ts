@@ -6,7 +6,7 @@ import { AdminGuardService } from './admin-guard.service';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'world-cup',
     component: HomeComponent
   },
   {
@@ -22,8 +22,8 @@ const routes: Routes = [
     loadChildren: './admin/admin.module#AdminModule',
     canActivate: [AdminGuardService]
   },
-  { path: 'home', redirectTo: '', pathMatch: 'full' },
-  { path: '**', redirectTo: '' }
+  { path: '', redirectTo: 'world-cup', pathMatch: 'full' },
+  { path: '**', redirectTo: 'world-cup' }
 ];
 
 @NgModule({

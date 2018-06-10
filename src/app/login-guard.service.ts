@@ -11,7 +11,7 @@ export class LoginGuardService implements CanActivate {
     const user = this.authService.auth.currentUser;
     const result = !user || user.isAnonymous;
     if (!result) {
-      this.router.navigate(['home']);
+      this.router.navigate(['world-cup']);
     }
     return result;
   }
