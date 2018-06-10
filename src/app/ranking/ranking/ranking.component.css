@@ -2,3 +2,8 @@
   max-width: 100px;
   height: 40px;
 }
+hr {
+  border-bottom-width: 1px;
+  border-bottom-style: dashed;
+  border-bottom-color: #aaa;
+}

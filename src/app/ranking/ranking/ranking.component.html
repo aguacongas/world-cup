@@ -11,22 +11,28 @@
     Tu peux pronostiquer jusqu'au coup d'envoi.
   </p>
   <p>
-    Le 1er gagne <b>toute mon estime</b>.
+    Le 1er gagne
+    <b>toute mon estime</b>.
   </p>
-    <mat-list-item matLine *ngFor="let rank of scores">
-      <form class="row" #form="ngForm" (ngSubmit)="submit()">
-        <div class="col-1">
-            <b>{{ rank.rank }}</b>
-        </div>
-        <div *ngIf="!rank.isUser" class="col-3">{{ rank.userName }}</div>
-        <mat-form-field *ngIf="rank.isUser" class="col-3">
-          <input matInput name="displayName" placeholder="pseudo" [(ngModel)]="displayName" maxlength="30" />
-        </mat-form-field>
-        <div class="col-1"><b>{{ rank.score }}</b></div>
-        <div class="col-1" *ngIf="rank.score > 1">points</div>
-        <div class="col-1" *ngIf="rank.score <= 1">point</div>
-        <button *ngIf="rank.isUser" class="col-2" mat-raised-button color="primary" type="submit">Enregistrer</button>
-      </form>
-    </mat-list-item>
+  <mat-list-item matLine *ngFor="let rank of scores">
+    <form class="row" #form="ngForm" (ngSubmit)="submit()">
+      <div class="col-1">
+        <b>{{ rank.rank }}</b>
+      </div>
+      <div *ngIf="!rank.isUser" class="col-12 col-md-3">{{ rank.userName }}</div>
+      <mat-form-field *ngIf="rank.isUser" class="col-12 col-md-3">
+        <input matInput name="displayName" placeholder="pseudo" [(ngModel)]="displayName" maxlength="30" />
+      </mat-form-field>
+      <div class="col-1">
+        <b>{{ rank.score }}</b>
+      </div>
+      <div class="col-1" *ngIf="rank.score > 1">points</div>
+      <div class="col-1" *ngIf="rank.score <= 1">point</div>
+      <div class="col-12 col-md">
+        <button *ngIf="rank.isUser" mat-raised-button color="primary" type="submit">Enregistrer</button>
+      </div>
+      <hr/>
+    </form>
+  </mat-list-item>
 
 </mat-card>
