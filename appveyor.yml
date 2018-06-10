@@ -32,5 +32,6 @@ on_success:
 - cmd: move dist\world-cup latest
 - cmd: copy latest\index.html .\
 - cmd: git add latest
-- cmd: git commit latest -m "Appveyor build succed %APPVEYOR_BUILD_NUMBER%"
+- cmd: git add index.html
+- cmd: git commit -m "Appveyor build succed %APPVEYOR_BUILD_NUMBER%"
 - cmd: git push
