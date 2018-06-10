@@ -67,7 +67,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "deployUrl": "latest/world-cup/"
+              "deployUrl": "world-cup/latest/"
             }
           }
         },
