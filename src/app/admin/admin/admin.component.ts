@@ -8,11 +8,11 @@ import { Component, OnInit } from '@angular/core';
 export class AdminComponent implements OnInit {
   links = [
     {
-      path: '/admin/match',
+      path: '/world-cup/admin/match',
       label: 'Match'
     },
     {
-      path: '/admin/team',
+      path: '/world-cup/admin/team',
       label: 'Team'
     }
   ];

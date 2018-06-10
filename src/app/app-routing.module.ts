@@ -10,15 +10,15 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'rank',
+    path: 'world-cup/rank',
     loadChildren: './ranking/ranking.module#RankingModule',
   },
   {
-    path: 'about',
+    path: 'world-cup/about',
     loadChildren: './about/about.module#AboutModule',
   },
   {
-    path: 'admin',
+    path: 'world-cup/admin',
     loadChildren: './admin/admin.module#AdminModule',
     canActivate: [AdminGuardService]
   },
