@@ -62,7 +62,7 @@ export class RankingComponent implements OnInit, OnDestroy {
                 score = score + bet.point;
               }
             });
-            const isUser = change.key === (this.user && this.user.uid);
+            const isUser = this.user && change.key === this.user.uid;
             if (isUser) {
               this.displayName = data.displayName;
             }
