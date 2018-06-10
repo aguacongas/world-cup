@@ -62,7 +62,7 @@ export class RankingComponent implements OnInit, OnDestroy {
                 score = score + bet.point;
               }
             });
-            const isUser = change.key === this.user.uid;
+            const isUser = change.key === (this.user && this.user.uid);
             if (isUser) {
               this.displayName = data.displayName;
             }
@@ -85,7 +85,7 @@ export class RankingComponent implements OnInit, OnDestroy {
 
   async submit() {
     try {
-      await this.db.list(`bets/${this.user.uid}`).set('displayName', this.displayName)
+      await this.db.list(`bets/${this.user.uid}`).set('displayName', this.displayName);
     } catch (e) {
       console.error(e);
     }
