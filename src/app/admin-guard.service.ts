@@ -15,7 +15,7 @@ export class AdminGuardService {
     const user = this.authService.auth.currentUser;
     const result = user && user.email === bdd.admin;
     if (!result) {
-      this.router.navigate(['login']);
+      this.router.navigate(['world-cup']);
     }
     return result;
   }

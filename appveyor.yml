@@ -1,0 +1,35 @@
+version: 1.0.{build}
+skip_tags: true
+branches:
+  except:
+  - gh-pages
+init:
+- choco install gitversion.portable -pre -y
+- ps: Install-Product node 8.11.2
+- cmd: git config --global core.autocrlf true
+environment:
+  secret:
+    secure: ojtEC1zgKmmqAvfrRUHjYg==
+  access_token:
+    secure: yQcU3EbE3/jaIhwn6e+n76xzcQ+tGXXdIZAmA3Z8ssj5IEYPehthJkLYhhNEmw21
+install:
+- cmd: appveyor-tools\secure-file -decrypt bdd.ts.enc -secret %secret%
+- cmd: copy bdd.ts src\environments
+- cmd: npm i
+before_build:
+- ps: gitversion /l console /output buildserver
+- ps: $env:BuildNumber=$env:APPVEYOR_BUILD_NUMBER
+build_script:
+- cmd: npm run build -- -c ci
+on_success:
+- cmd: git config --global credential.helper store
+- ps: if ($isWindows) { Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n" }
+- cmd: git config --global user.email "aguacongas@gmail.com"
+- cmd: git config --global user.name "Aguacongas"
+- cmd: git stash
+- cmd: git checkout gh-pages
+- cmd: IF EXIST latest ( rmdir /S /Q latest )
+- cmd: move dist\world-cup latest
+- cmd: git add latest
+- cmd: git commit latest -m "Appveyor build succed %APPVEYOR_BUILD_NUMBER%"
+- cmd: git push
