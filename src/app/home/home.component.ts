@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(private authService: AngularFireAuth, private db: AngularFireDatabase) {
-    // this.isIe = window.navigator.userAgent.indexOf('MSIE ') > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./);
+    this.isIe = window.navigator.userAgent.indexOf('MSIE ') > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./);
   }
 
   ngOnInit() {
