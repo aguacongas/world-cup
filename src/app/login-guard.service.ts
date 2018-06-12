@@ -7,7 +7,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 })
 export class LoginGuardService implements CanActivate {
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate(): boolean {
     const user = this.authService.auth.currentUser;
     const result = !user || user.isAnonymous;
     if (!result) {

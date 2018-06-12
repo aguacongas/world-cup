@@ -8,7 +8,6 @@ import { FirebaseAuth } from 'angularfire2';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'wc';
   isAdmin = false;
   userName: string;
 

@@ -1,4 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonModule, APP_BASE_HREF } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule,
+  MatCardModule,
+  MatTabsModule
+} from '@angular/material';
+import { RouterModule } from '@angular/router';
 
 import { AdminComponent } from './admin.component';
 
@@ -8,7 +15,16 @@ describe('AdminComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AdminComponent ]
+      imports: [
+        CommonModule,
+        FormsModule,
+        RouterModule.forRoot([]),
+        MatButtonModule,
+        MatCardModule,
+        MatTabsModule
+      ],
+      declarations: [ AdminComponent ],
+      providers: [ { provide: APP_BASE_HREF, useValue: '/'} ]
     })
     .compileComponents();
   }));
