@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from 'firebase';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
@@ -7,14 +7,15 @@ import { auth } from 'firebase/app';
 import { Bet } from '../model/bet';
 import { Match } from '../model/match';
 import { UserBet } from './model/user-bet';
-import { Subscription } from 'rxjs';
+import { Provider } from './model/provider';
+import { AuthProvider } from '@firebase/auth-types';
 
 @Component({
   selector: 'wc-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   days = [
     'Jour 1',
     'Jour 2',
@@ -25,6 +26,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     '3e place',
     'Finale'
   ];
+  providers: Provider[] = [
+    { id: 'google.com', name: 'Google', disabled: false, authProvider: new auth.GoogleAuthProvider()},
+    { id: 'facebook.com', name: 'Facebook', disabled: false, authProvider: new auth.FacebookAuthProvider()},
+    { id: 'twitter.com', name: 'Twitter', disabled: false, authProvider: new auth.TwitterAuthProvider()},
+    { id: 'github.com', name: 'Github', disabled: false, authProvider: new auth.GithubAuthProvider()}
+  ];
+  loginError: string;
 
   user: User;
   userBets: UserBet[];
@@ -32,7 +40,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private bets: Bet[];
   private matches: Match[];
-  private subscription: Subscription;
   private setDisplayName = true;
 
   constructor(private authService: AngularFireAuth, private db: AngularFireDatabase) {
@@ -40,10 +47,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscription = this.authService.user.subscribe(user => {
-      this.user = user;
-
-      if (user) {
+    const authentication = this.authService.auth;
+    authentication.getRedirectResult().then(result => {
+      this.user = result.user as User;
+      if (this.user) {
         this.db.list(`bets/${this.user.uid}`)
           .snapshotChanges()
           .subscribe(changes => {
@@ -74,29 +81,27 @@ export class HomeComponent implements OnInit, OnDestroy {
           });
           this.merge();
         });
+      }).catch(error => {
+        if (error.code === 'auth/account-exists-with-different-credential') {
+          const email = error.email;
+          authentication.fetchSignInMethodsForEmail(email).then(methods => {
+            const recommendedMethod = methods[0];
+            const provider = this.providers.find(p => p.id === recommendedMethod);
+            this.providers.forEach(p => {
+              p.disabled = true;
+            });
+            provider.disabled = false;
+            this.loginError = `Tu t'es deja connecté avec ${provider.name} ! Click sur ${provider.name}`;
+          });
+        } else {
+          console.error(error);
+        }
       });
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-
-  login(provider: 'Google' | 'Facebook' | 'Twitter' | 'Github') {
+  login(provider: AuthProvider) {
     const authService = this.authService.auth;
-    switch (provider) {
-      case 'Google':
-        authService.signInWithRedirect(new auth.GoogleAuthProvider());
-        break;
-      case 'Facebook':
-        authService.signInWithRedirect(new auth.FacebookAuthProvider());
-        break;
-      case 'Twitter':
-        authService.signInWithRedirect(new auth.TwitterAuthProvider());
-        break;
-      case 'Github':
-        authService.signInWithRedirect(new auth.GithubAuthProvider());
-        break;
-    }
+    authService.signInWithRedirect(provider);
   }
 
   async submit() {

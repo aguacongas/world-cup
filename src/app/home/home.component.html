@@ -7,13 +7,13 @@
       <div class="col-12 col-md-10">
         Pronostique pour du beure sur la coupe du monde 2018 en Russie.
         <div *ngIf="!user" class="login">
-          <p>
+          <p *ngIf="loginError">
+            {{ loginError }}
+          </p>
+          <p *ngIf="!loginError">
             Connecte toi avec:
           </p>
-          <button mat-raised-button color="primary" (click)="login('Google')">Google</button>
-          <button mat-raised-button color="primary" (click)="login('Facebook')">Facebook</button>
-          <button mat-raised-button color="primary" (click)="login('Twitter')">Twitter</button>
-          <button mat-raised-button color="primary" (click)="login('Github')">Github</button>
+          <button *ngFor="let provider of providers" mat-raised-button color="primary" (click)="login(provider.authProvider)" [disabled]="provider.disabled">{{ provider.name }}</button>
         </div>
       </div>
       <div class="col-6 col-md-2" *ngIf="user">
