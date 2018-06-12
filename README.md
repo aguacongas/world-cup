@@ -1,6 +1,40 @@
 # WorldCup
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.7.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.7.  
+You need a [firebase](https://firebase.google.com/) to build and run it.  
+Then update settings from [bdd.ts](https://github.com/aguacongas/worl-cup/blob/develop/bdd.ts) and copy it to *src/environment*.
+
+**bdd.ts**  
+``` ts
+export const bdd = {
+  firebase: {
+    apiKey: 'Your api key',
+    authDomain: 'Your auth domain',
+    databaseURL: 'Your database url',
+    projectId: 'Your firebase project id'
+  },
+  admin: 'Your admin email address'
+};
+```
+
+### Database rules
+
+Database rules should be set as this: 
+
+``` json
+{
+  "rules": {
+    ".read": true,
+    ".write": "auth.email === 'Your admin email address'",
+    "bets": {
+      "$uid": {
+        ".read": "$uid === auth.uid || auth.email === 'Your admin email address'",
+        ".write": "$uid === auth.uid"
+      }
+    }
+  }
+}
+```
 
 ## Development server
 
