@@ -45,5 +45,5 @@ on_success:
 - cmd: IF NOT EXIST admin\match ( mkdir admin\match )
 - cmd: copy latest\index.html admin\match
 - cmd: git add admin\match
-- cmd: git commit -m "chore(Appveyor): build succed %APPVEYOR_BUILD_NUMBER% [skip ci]"
+- cmd: 'git commit -m "chore(Appveyor): build succed %APPVEYOR_BUILD_NUMBER% [skip ci]"'
 - cmd: git push
