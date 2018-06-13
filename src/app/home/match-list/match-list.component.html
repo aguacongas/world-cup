@@ -13,7 +13,7 @@
                 <input matInput [value]="match.match.date.getHours() | time" name="time" disabled />
               </mat-form-field>
               <mat-form-field>
-                <input matInput [(ngModel)]="match.bet.score1" [placeholder]="match.match.result1.teamId" name="team1" type="number" [disabled]="matchStarted(match.match)" />
+                <input matInput [(ngModel)]="match.bet.score1" [placeholder]="match.match.result1.teamId" name="team1" type="number" min="0" [disabled]="matchStarted(match.match)" />
                 <input matInput class="result" *ngIf="matchStarted(match.match)" [(ngModel)]="match.match.result1.score" name="score1" type="number" disabled />
               </mat-form-field>
               <mat-form-field class="hour">
@@ -21,7 +21,7 @@
                 <input matInput *ngIf="matchStarted(match.match)" disabled />
               </mat-form-field>
               <mat-form-field>
-                <input matInput [(ngModel)]="match.bet.score2" [placeholder]="match.match.result2.teamId" name="team2" type="number" [disabled]="matchStarted(match.match)" />
+                <input matInput [(ngModel)]="match.bet.score2" [placeholder]="match.match.result2.teamId" name="team2" type="number" min="0" [disabled]="matchStarted(match.match)" />
                 <input matInput class="result" *ngIf="matchStarted(match.match)" [(ngModel)]="match.match.result2.score" name="score1" type="number" disabled />
               </mat-form-field>
               <mat-form-field *ngIf="matchStarted(match.match)">
