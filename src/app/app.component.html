@@ -7,7 +7,8 @@
     <button mat-button class="menu-bouton" *ngIf="userName" [matMenuTriggerFor]="userMenu">{{userName}}</button>
     <mat-menu #userMenu="matMenu">
         <button *ngIf="isAdmin" mat-menu-item (click)="navigate('world-cup/admin')">Admin</button>
-        <button mat-menu-item (click)="logout()">Logout</button>
+        <button mat-menu-item (click)="logout()">Deconnexion</button>
+        <button mat-menu-item (click)="deleteMe()">Supprime moi!</button>
     </mat-menu>
     <button mat-button class="burger-bouton row justify-content-end" [matMenuTriggerFor]="burgerMenu">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="30" height="30" focusable="false">
@@ -20,8 +21,9 @@
       <button mat-menu-item (click)="navigate('world-cup/rank')">Scores</button>
       <button mat-menu-item (click)="navigate('world-cup/about')">A propos</button>
       <button *ngIf="isAdmin" mat-menu-item (click)="navigate('world-cup/admin')">Admin</button>
-      <button mat-menu-item *ngIf="userName" (click)="logout()">Logout</button>
-    </mat-menu>
+      <button mat-menu-item (click)="logout()">Deconnexion</button>
+      <button mat-menu-item (click)="deleteMe()">Supprime moi!</button>
+  </mat-menu>
   </mat-toolbar>
   <div class="body-content">
     <router-outlet></router-outlet>

@@ -18,7 +18,8 @@ import { MatToolbarModule,
   MatTabsModule,
   MatGridListModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule,
+  MatBottomSheetModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -29,12 +30,17 @@ import { HomeComponent } from './home/home.component';
 import { MatchListComponent } from './home/match-list/match-list.component';
 import { PipeModule } from './pipe/pipe.module';
 import { ScoreService } from './score.service';
+import { DeleteUserComponent } from './delete-user/delete-user.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    MatchListComponent
+    MatchListComponent,
+    DeleteUserComponent
+  ],
+  entryComponents: [
+    DeleteUserComponent
   ],
   imports: [
     BrowserModule,
@@ -57,6 +63,7 @@ import { ScoreService } from './score.service';
     MatGridListModule,
     MatFormFieldModule,
     MatInputModule,
+    MatBottomSheetModule,
     PipeModule
   ],
   providers: [
