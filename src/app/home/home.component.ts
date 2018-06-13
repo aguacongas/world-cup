@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User } from 'firebase';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { auth } from 'firebase/app';
+import { Subscription } from 'rxjs';
 
 import { Bet } from '../model/bet';
 import { Match } from '../model/match';
@@ -15,7 +16,7 @@ import { AuthProvider } from '@firebase/auth-types';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   days = [
     'Jour 1',
     'Jour 2',
@@ -27,10 +28,30 @@ export class HomeComponent implements OnInit {
     'Finale'
   ];
   providers: Provider[] = [
-    { id: 'google.com', name: 'Google', disabled: false, authProvider: new auth.GoogleAuthProvider()},
-    { id: 'facebook.com', name: 'Facebook', disabled: false, authProvider: new auth.FacebookAuthProvider()},
-    { id: 'twitter.com', name: 'Twitter', disabled: false, authProvider: new auth.TwitterAuthProvider()},
-    { id: 'github.com', name: 'Github', disabled: false, authProvider: new auth.GithubAuthProvider()}
+    {
+      id: 'google.com',
+      name: 'Google',
+      disabled: false,
+      authProvider: new auth.GoogleAuthProvider()
+    },
+    {
+      id: 'facebook.com',
+      name: 'Facebook',
+      disabled: false,
+      authProvider: new auth.FacebookAuthProvider()
+    },
+    {
+      id: 'twitter.com',
+      name: 'Twitter',
+      disabled: false,
+      authProvider: new auth.TwitterAuthProvider()
+    },
+    {
+      id: 'github.com',
+      name: 'Github',
+      disabled: false,
+      authProvider: new auth.GithubAuthProvider()
+    }
   ];
   loginError: string;
 
@@ -41,62 +62,58 @@ export class HomeComponent implements OnInit {
   private bets: Bet[];
   private matches: Match[];
   private setDisplayName = true;
+  subscription: Subscription;
 
-  constructor(private authService: AngularFireAuth, private db: AngularFireDatabase) {
-    this.isIe = window.navigator.userAgent.indexOf('MSIE ') > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./);
+  constructor(
+    private authService: AngularFireAuth,
+    private db: AngularFireDatabase
+  ) {
+    this.isIe =
+      window.navigator.userAgent.indexOf('MSIE ') > 0 ||
+      !!navigator.userAgent.match(/Trident.*rv\:11\./);
   }
 
   ngOnInit() {
-    const authentication = this.authService.auth;
-    authentication.getRedirectResult().then(result => {
-      this.user = result.user as User;
-      if (this.user) {
-        this.db.list(`bets/${this.user.uid}`)
-          .snapshotChanges()
-          .subscribe(changes => {
-            this.bets = [];
-            changes.forEach(action => {
-              const bet = <Bet>action.payload.val();
-              if (bet.score1 || bet.score1 === 0 || bet.score2 || bet.score2 === 0) {
-                bet.matchId = action.key;
-                this.bets.push(bet);
-                this.setDisplayName = false;
-              }
-            });
-            this.merge();
+    this.subscription = this.authService.user.subscribe(user => {
+      this.user = user;
+      if (!user) {
+        const authentication = this.authService.auth;
+        authentication
+          .getRedirectResult()
+          .then(result => {
+            this.user = result.user as User;
+            this.getData();
+          })
+          .catch(error => {
+            if (
+              error.code === 'auth/account-exists-with-different-credential'
+            ) {
+              const email = error.email;
+              authentication.fetchSignInMethodsForEmail(email).then(methods => {
+                const recommendedMethod = methods[0];
+                const provider = this.providers.find(
+                  p => p.id === recommendedMethod
+                );
+                this.providers.forEach(p => {
+                  p.disabled = true;
+                });
+                provider.disabled = false;
+                this.loginError = `Tu t'es deja connecté avec ${
+                  provider.name
+                } ! Click sur ${provider.name}`;
+              });
+            } else {
+              console.error(error);
+            }
           });
       } else {
-        this.bets = [];
+        this.getData();
       }
+    });
+  }
 
-      this.db
-        .list('match')
-        .snapshotChanges()
-        .subscribe(changes => {
-          this.matches = [];
-          changes.forEach(action => {
-            const match = action.payload.val() as Match;
-            match.id = action.key;
-            this.matches.push(match);
-          });
-          this.merge();
-        });
-      }).catch(error => {
-        if (error.code === 'auth/account-exists-with-different-credential') {
-          const email = error.email;
-          authentication.fetchSignInMethodsForEmail(email).then(methods => {
-            const recommendedMethod = methods[0];
-            const provider = this.providers.find(p => p.id === recommendedMethod);
-            this.providers.forEach(p => {
-              p.disabled = true;
-            });
-            provider.disabled = false;
-            this.loginError = `Tu t'es deja connecté avec ${provider.name} ! Click sur ${provider.name}`;
-          });
-        } else {
-          console.error(error);
-        }
-      });
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   login(provider: AuthProvider) {
@@ -108,7 +125,12 @@ export class HomeComponent implements OnInit {
     try {
       this.userBets.forEach(async b => {
         const bet = b.bet;
-        if (!bet.score1 && bet.score1 !== 0 && !bet.score2 && bet.score2 !== 0) {
+        if (
+          !bet.score1 &&
+          bet.score1 !== 0 &&
+          !bet.score2 &&
+          bet.score2 !== 0
+        ) {
           await this.db.list(`bets/${this.user.uid}`).remove(bet.matchId);
           return;
         }
@@ -128,11 +150,50 @@ export class HomeComponent implements OnInit {
 
     if (this.setDisplayName) {
       try {
-        await this.db.list(`bets/${this.user.uid}`).set('displayName', this.user.displayName);
+        await this.db
+          .list(`bets/${this.user.uid}`)
+          .set('displayName', this.user.displayName);
       } catch (e) {
         console.error(e);
       }
     }
+  }
+
+  private getData() {
+    if (this.user) {
+      this.db
+        .list(`bets/${this.user.uid}`)
+        .snapshotChanges()
+        .subscribe(changes => {
+          this.bets = [];
+          changes.forEach(action => {
+            const bet = <Bet>action.payload.val();
+            if (bet.score1 ||
+              bet.score1 === 0 ||
+              bet.score2 ||
+              bet.score2 === 0) {
+              bet.matchId = action.key;
+              this.bets.push(bet);
+              this.setDisplayName = false;
+            }
+          });
+          this.merge();
+        });
+    } else {
+      this.bets = [];
+    }
+    this.db
+      .list('match')
+      .snapshotChanges()
+      .subscribe(changes => {
+        this.matches = [];
+        changes.forEach(action => {
+          const match = action.payload.val() as Match;
+          match.id = action.key;
+          this.matches.push(match);
+        });
+        this.merge();
+      });
   }
 
   private merge(): void {
@@ -140,19 +201,18 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    this.userBets = this.matches
-      .map<UserBet>(m => {
-        const bet = this.bets.find(b => b.matchId === m.id);
-        return {
-          bet: {
-            score1: bet ? bet.score1 : undefined,
-            score2: bet ? bet.score2 : undefined,
-            matchId: m.id
-          },
-          match: m,
-          info: undefined,
-          point: undefined
-        };
-      });
+    this.userBets = this.matches.map<UserBet>(m => {
+      const bet = this.bets.find(b => b.matchId === m.id);
+      return {
+        bet: {
+          score1: bet ? bet.score1 : undefined,
+          score2: bet ? bet.score2 : undefined,
+          matchId: m.id
+        },
+        match: m,
+        info: undefined,
+        point: undefined
+      };
+    });
   }
 }
