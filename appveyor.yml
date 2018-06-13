@@ -30,8 +30,20 @@ on_success:
 - cmd: git checkout gh-pages
 - cmd: IF EXIST latest ( rmdir /S /Q latest )
 - cmd: move dist\world-cup latest
-- cmd: copy latest\index.html .\
 - cmd: git add latest
+- cmd: copy latest\index.html .\
 - cmd: git add index.html
-- cmd: git commit -m "Appveyor build succed %APPVEYOR_BUILD_NUMBER%"
+- cmd: IF NOT EXIST rank ( mkdir rank )
+- cmd: copy latest\index.html rank
+- cmd: git add rank
+- cmd: IF NOT EXIST about ( mkdir about )
+- cmd: copy latest\index.html about
+- cmd: git add about
+- cmd: IF NOT EXIST admin\team ( mkdir admin\team )
+- cmd: copy latest\index.html admin\team
+- cmd: git add admin\team
+- cmd: IF NOT EXIST admin\match ( mkdir admin\match )
+- cmd: copy latest\index.html admin\match
+- cmd: git add admin\match
+- cmd: git commit -m "chore(Appveyor): build succed %APPVEYOR_BUILD_NUMBER% [skip ci]"
 - cmd: git push
