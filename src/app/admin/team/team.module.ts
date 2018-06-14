@@ -21,7 +21,8 @@ import { AddTeamComponent } from './add-team/add-team.component';
     MatGridListModule,
     MatListModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    MatButtonModule
   ],
   declarations: [TeamListComponent, AddTeamComponent]
 })

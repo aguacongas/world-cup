@@ -1,11 +1,22 @@
 <wc-add-team></wc-add-team>
-<mat-grid-list cols="4">
-  <mat-grid-tile *ngFor="let group of groups">
-    <div>
-      Group {{ group }}
-      <mat-list>
+<mat-grid-list cols="1">
+  <div class="row">
+    <mat-list-item class="col-3" *ngFor="let group of groups; index as i">
+      <div *ngIf="i < 4">
+        <b>
+          Group {{ group }}
+        </b>
         <mat-list-item *ngFor="let team of getGroup(group)">{{ team }}</mat-list-item>
-      </mat-list>
-    </div>
-  </mat-grid-tile>
+      </div>
+    </mat-list-item>
+    <div class="w-100"></div>
+    <mat-list-item class="col-3" *ngFor="let group of groups; index as i">
+      <div *ngIf="i > 3">
+        <b>
+          Group {{ group }}
+        </b>
+        <mat-list-item *ngFor="let team of getGroup(group)">{{ team }}</mat-list-item>
+      </div>
+    </mat-list-item>
+  </div>
 </mat-grid-list>
