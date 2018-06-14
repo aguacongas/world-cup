@@ -3,8 +3,8 @@
   <mat-list-item *ngFor="let day of days">
     <div>
       {{ day }}
-      <mat-list>
-        <mat-list-item *ngFor="let match of getMatches(day)">
+      <mat-grid-list cols="1">
+        <mat-list-item matLine *ngFor="let match of getMatches(day)">
           <form matLine #form="ngForm" (ngSubmit)="submit(match)">
             <mat-form-field>
               <input matInput [value]="match.date | date" placeholder="Date" name="date" disabled />
@@ -18,10 +18,10 @@
             <mat-form-field>
               <input matInput [(ngModel)]="match.result2.score" [placeholder]="match.result2.teamId" name="team2" type="number" />
             </mat-form-field>
-            <button class="btn btn-primary mx-sm-3" type="submit">Update</button>
+            <button mat-raised-button color="primary" type="submit">Update</button>
           </form>
         </mat-list-item>
-      </mat-list>
+      </mat-grid-list>
     </div>
   </mat-list-item>
 </mat-grid-list>

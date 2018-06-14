@@ -28,6 +28,7 @@ import { AddMatchComponent } from './add-match/add-match.component';
     MatDatepickerModule,
     MatNativeDateModule,
     MatListModule,
+    MatButtonModule,
     PipeModule
   ],
   declarations: [MatchListComponent, AddMatchComponent]
