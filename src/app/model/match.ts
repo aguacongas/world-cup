@@ -6,4 +6,5 @@ export interface Match extends ModelBase {
   day: string;
   result1: Result;
   result2: Result;
+  group: string;
 }
