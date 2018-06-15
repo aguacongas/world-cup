@@ -15,7 +15,7 @@
     <b>toute mon estime</b>.
   </p>
   <mat-list-item matLine *ngFor="let rank of scores">
-    <form class="row" #form="ngForm" (ngSubmit)="submit()">
+    <form class="row" [class.last]="rank.score" #form="ngForm" (ngSubmit)="submit()">
       <div class="col-1">
         <b>{{ rank.rank }}</b>
       </div>
@@ -31,7 +31,6 @@
       <div class="col-12 col-md">
         <button *ngIf="rank.isUser" mat-raised-button color="primary" type="submit">Enregistrer</button>
       </div>
-      <hr *ngIf="rank.score"/>
     </form>
   </mat-list-item>
 

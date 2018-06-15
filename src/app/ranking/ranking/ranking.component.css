@@ -2,8 +2,10 @@
   max-width: 100px;
   height: 40px;
 }
-hr {
+.last {
   border-bottom-width: 1px;
   border-bottom-style: dashed;
   border-bottom-color: #aaa;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
 }
