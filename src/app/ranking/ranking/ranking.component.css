@@ -3,9 +3,5 @@
   height: 40px;
 }
 .last {
-  border-bottom-width: 1px;
-  border-bottom-style: dashed;
-  border-bottom-color: #aaa;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
