@@ -8,6 +8,7 @@ import { Ranking } from '../model/ranking';
 import { Match } from '../../model/match';
 import { Bet } from '../../model/bet';
 import { ScoreService } from '../../score.service';
+import { del } from 'selenium-webdriver/http';
 
 @Component({
   selector: 'wc-ranking',
@@ -21,61 +22,87 @@ export class RankingComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(private authService: AngularFireAuth,
+  constructor(
+    private authService: AngularFireAuth,
     private db: AngularFireDatabase,
-    private calcService: ScoreService) {
-  }
+    private calcService: ScoreService
+  ) {}
 
   ngOnInit() {
     this.subscription = this.authService.user.subscribe(user => {
       this.user = user;
 
-      this.db.list('bets').snapshotChanges().subscribe(changes => {
-        this.db
-        .list('match')
+      this.db
+        .list('bets')
         .snapshotChanges()
-        .subscribe(matchchanges => {
-          const matches = [];
-          matchchanges.forEach(action => {
-            const match = action.payload.val() as Match;
-            this.scores = [];
-            match.id = action.key;
-            matches.push(match);
-          });
+        .subscribe(changes => {
+          this.db
+            .list('match')
+            .snapshotChanges()
+            .subscribe(matchchanges => {
+              const matches = [];
+              matchchanges.forEach(action => {
+                const match = action.payload.val() as Match;
+                this.scores = [];
+                match.id = action.key;
+                matches.push(match);
+              });
 
-          changes.forEach((change, index) => {
-            const bets = [];
-            const data: any = change.payload.val();
-            for (const key in data) {
-              if (data.hasOwnProperty(key) && key !== 'displayName') {
-                const bet = data[key] as Bet;
-                bet.matchId = key;
-                bets.push(bet);
-              }
-            }
+              changes.forEach((change, index) => {
+                const bets = [];
+                const data: any = change.payload.val();
+                for (const key in data) {
+                  if (data.hasOwnProperty(key) && key !== 'displayName') {
+                    const bet = data[key] as Bet;
+                    bet.matchId = key;
+                    bets.push(bet);
+                  }
+                }
 
-            const userBets = this.calcService.merge(matches, bets);
-            this.calcService.calcResults(userBets);
-            let score = 0;
-            userBets.forEach(bet => {
-              if (bet.point) {
-                score = score + bet.point;
+                const userBets = this.calcService.merge(matches, bets);
+                this.calcService.calcResults(userBets);
+                let score = 0;
+                userBets.forEach(bet => {
+                  if (bet.point) {
+                    score = score + bet.point;
+                  }
+                });
+                const isUser = this.user && change.key === this.user.uid;
+                if (isUser) {
+                  this.displayName = data.displayName;
+                }
+                this.scores.push({
+                  rank: undefined,
+                  userName: data.displayName,
+                  score: score,
+                  isUser: isUser
+                });
+              });
+
+              this.scores.sort(
+                (a, b) => (a.score === b.score ? 0 : a.score > b.score ? -1 : 1)
+              );
+              this.scores.forEach((s, i) => {
+                s.rank = i + 1;
+              });
+              for (let i = 0; i < this.scores.length - 1; i++) {
+                const current = this.scores[i];
+                let some = false;
+                this.scores.filter(r => r.score === current.score && r.rank !== current.rank)
+                  .forEach((r, j, a) => {
+                    some = true;
+                    delete r.rank;
+                    if (j < a.length - 1) {
+                      delete r.score;
+                    }
+                    i++;
+                  });
+                if (some) {
+                  delete current.score;
+                }
               }
             });
-            const isUser = this.user && change.key === this.user.uid;
-            if (isUser) {
-              this.displayName = data.displayName;
-            }
-            this.scores.push({ rank: undefined,
-              userName: data.displayName,
-              score: score,
-              isUser: isUser});
-          });
-
-          this.scores.sort((a, b) => a.score === b.score ? 0 : a.score > b.score ? -1 : 1);
-          this.scores.forEach((s, i) => s.rank = i + 1);
         });
-      });
     });
   }
 
@@ -85,7 +112,9 @@ export class RankingComponent implements OnInit, OnDestroy {
 
   async submit() {
     try {
-      await this.db.list(`bets/${this.user.uid}`).set('displayName', this.displayName);
+      await this.db
+        .list(`bets/${this.user.uid}`)
+        .set('displayName', this.displayName);
     } catch (e) {
       console.error(e);
     }

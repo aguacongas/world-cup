@@ -23,15 +23,15 @@
       <mat-form-field *ngIf="rank.isUser" class="col-12 col-md-3">
         <input matInput name="displayName" placeholder="pseudo" [(ngModel)]="displayName" maxlength="30" />
       </mat-form-field>
-      <div class="col-1">
+      <div *ngIf="rank.score || rank.score == 0" class="col-1">
         <b>{{ rank.score }}</b>
       </div>
-      <div class="col-1" *ngIf="rank.score > 1">points</div>
-      <div class="col-1" *ngIf="rank.score <= 1">point</div>
+      <div class="col-1" *ngIf="rank.score && rank.score > 1">points</div>
+      <div class="col-1" *ngIf="rank.score == 0 || rank.score == 1">point</div>
       <div class="col-12 col-md">
         <button *ngIf="rank.isUser" mat-raised-button color="primary" type="submit">Enregistrer</button>
       </div>
-      <hr/>
+      <hr *ngIf="rank.score"/>
     </form>
   </mat-list-item>
 
