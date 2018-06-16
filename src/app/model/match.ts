@@ -7,5 +7,5 @@ export interface Match extends ModelBase {
   result1: Result;
   result2: Result;
   group: string;
-  finished: boolean;
+  finished?: boolean;
 }

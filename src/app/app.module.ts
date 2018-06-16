@@ -108,17 +108,11 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
               http.get('https://api.fifa.com/api/v1/live/football/now?language=fr-FR')
               .subscribe((data: RootObject) => {
                 if (data && data.Results) {
-                  if (data.Results.length === 0) {
-                    currents.forEach(m => {
-                      m.finished = true;
-                      update(m);
-                    });
-                    return;
-                  }
                   const results = data.Results;
                   results.forEach(result => {
                     const match = currents.find(m => m.result1.teamId === result.HomeTeam.TeamName[0].Description);
                     if (match) {
+                      match.finished = false;
                       if (result.HomeTeam.Score !== match.result1.score) {
                         match.result1.score = result.HomeTeam.Score;
                         update(match);
@@ -129,6 +123,12 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
                       }
                     }
                   });
+                  const finished = currents.find(m => m.finished === false
+                    && results.findIndex(r => r.HomeTeam.TeamName[0].Description === m.result1.teamId) === -1);
+                  if (finished) {
+                    finished.finished = true;
+                    update(finished);
+                  }
                 }
               }, e => {
                 console.error(e);
