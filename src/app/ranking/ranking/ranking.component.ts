@@ -48,7 +48,7 @@ export class RankingComponent implements OnInit, OnDestroy {
                 matches.push(match);
               });
 
-              changes.forEach((change, index) => {
+              changes.forEach((change) => {
                 const bets = [];
                 const data: any = change.payload.val();
                 for (const key in data) {

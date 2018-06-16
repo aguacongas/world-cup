@@ -84,61 +84,116 @@ import { RootObject } from './model/fifa';
 export class AppModule { }
 
 export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http: HttpClient): Function {
+  const matches: Match[] = [];
   return () => {
     return new Promise((resolve, reject) => {
       authService.user.subscribe(user => {
         resolve();
-        if (user && user.email === bdd.admin) {
-          const matches: Match[] = [];
-          db.list('match')
-            .snapshotChanges()
-            .subscribe(changes => {
-              changes.forEach(action => {
-                const match = action.payload.val() as Match;
+        db.list('match')
+          .snapshotChanges()
+          .subscribe(changes => {
+            changes.forEach(action => {
+              const match = action.payload.val() as Match;
+              if (!matches.find(m => m.id === action.key)) {
                 match.date = new Date(match.date);
                 match.id = action.key;
                 matches.push(match);
-              });
+              }
             });
+          });
 
-          setInterval(() => {
-            const now = new Date();
-            const currents = matches.filter(m => m.date <= now && !m.finished);
-            if (currents.length > 0) {
-              http.get('https://api.fifa.com/api/v1/live/football/now?language=fr-FR')
-              .subscribe((data: RootObject) => {
-                if (data && data.Results) {
-                  const results = data.Results;
-                  results.forEach(result => {
-                    const match = currents.find(m => m.result1.teamId === result.HomeTeam.TeamName[0].Description);
-                    if (match) {
-                      match.finished = false;
-                      if (result.HomeTeam.Score !== match.result1.score) {
-                        match.result1.score = result.HomeTeam.Score;
-                        update(match);
-                      }
-                      if (result.AwayTeam.Score !== match.result2.score) {
-                        match.result2.score = result.AwayTeam.Score;
-                        update(match);
-                      }
-                    }
-                  });
-                  const finished = currents.find(m => m.finished === false
-                    && results.findIndex(r => r.HomeTeam.TeamName[0].Description === m.result1.teamId) === -1);
-                  if (finished) {
-                    finished.finished = true;
-                    update(finished);
-                  }
+        if (window && window['Notification']) {
+          if (Notification['permission'] === 'granted') {
+            listen();
+          } else if (Notification['permission'] !== 'denied') {
+            Notification
+              .requestPermission()
+              .then(permission => {
+                if (permission === 'granted') {
+                  listen();
                 }
-              }, e => {
-                console.error(e);
-              });
-            }
+            });
+          }
+        }
+
+        if (user && user.email === bdd.admin) {
+          setInterval(() => {
+            autoupdate();
           }, 10000);
         }
       });
     });
   };
+
+  function listen() {
+    db.list('match')
+      .snapshotChanges()
+      .subscribe(changes => {
+        changes.forEach(action => {
+          if (action.type !==  'value') {
+            return;
+          }
+          const match = action.payload.val() as Match;
+          const found = matches.find(m => m.id === action.key);
+          if (found) {
+            const message = `${match.result1.teamId} - ${match.result2.teamId}`;
+            if (match.finished !== undefined && match.finished === false) {
+              notify('C\'est partit', message);
+            } else if (match.finished) {
+              notify('C\'est fini', message);
+            } else {
+              notify('Gooooal', message);
+            }
+          }
+        });
+      });
+  }
+
+  function notify(title: string, message: string) {
+    const option = {
+      body: message
+    };
+    const n = new Notification(title, option);
+    n.onclick = () => {
+      n.close.bind(n);
+    };
+    setTimeout(n.close.bind(n), 5000);
+  }
+
+  function autoupdate() {
+    const now = new Date();
+    const currents = matches.filter(m => m.date <= now && !m.finished);
+    if (currents.length > 0) {
+      http.get('https://api.fifa.com/api/v1/live/football/now?language=fr-FR')
+        .subscribe((data: RootObject) => {
+          if (data && data.Results) {
+            const results = data.Results;
+            results.forEach(result => {
+              const match = currents.find(m => m.result1.teamId === result.HomeTeam.TeamName[0].Description);
+              if (match) {
+                match.finished = false;
+                if (result.HomeTeam.Score !== match.result1.score) {
+                  match.result1.score = result.HomeTeam.Score;
+                  update(match);
+                }
+                if (result.AwayTeam.Score !== match.result2.score) {
+                  match.result2.score = result.AwayTeam.Score;
+                  update(match);
+                }
+              }
+            });
+            const finished = currents.find(m => m.finished === false
+              && results.findIndex(r => r.HomeTeam.TeamName[0].Description === m.result1.teamId) === -1);
+            if (finished) {
+              finished.finished = true;
+              update(finished);
+            }
+          }
+        }, e => {
+          console.error(e);
+        });
+    }
+  }
 
   async function update(match: Match) {
     try {

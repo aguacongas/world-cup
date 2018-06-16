@@ -188,9 +188,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe(changes => {
         this.matches = [];
         changes.forEach(action => {
-          const match = action.payload.val() as Match;
-          match.id = action.key;
-          this.matches.push(match);
+          if (!this.matches.find(m => m.id === action.key)) {
+            const match = action.payload.val() as Match;
+            match.id = action.key;
+            this.matches.push(match);
+          }
         });
         this.merge();
       });
