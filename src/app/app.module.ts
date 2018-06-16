@@ -130,18 +130,22 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
       .snapshotChanges()
       .subscribe(changes => {
         changes.forEach(action => {
-          if (action.type !==  'value') {
+          if (action.type !==  'child_changed') {
             return;
           }
           const match = action.payload.val() as Match;
           const found = matches.find(m => m.id === action.key);
-          if (found) {
-            const message = `${match.result1.teamId} - ${match.result2.teamId}`;
-            if (match.finished !== undefined && match.finished === false) {
-              notify('C\'est partit', message);
-            } else if (match.finished) {
-              notify('C\'est fini', message);
-            } else {
+          if (found && match.finished !== undefined) {
+            let message = `${match.result1.teamId} - ${match.result2.teamId}`;
+            if (found.finished !== match.finished) {
+              found.finished = match.finished;
+              if (match.finished === false) {
+                notify('C\'est partit', message);
+              } else {
+                notify('C\'est fini', message);
+              }
+            } else if (match.result1.score || match.result2.score) {
+              message = message + `\n${match.result1.score} - ${match.result2.score}`;
               notify('Gooooal', message);
             }
           }
