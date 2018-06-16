@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router, CanActivate } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 
 import { bdd } from '../environments/bdd';
@@ -7,9 +7,10 @@ import { bdd } from '../environments/bdd';
 @Injectable({
   providedIn: 'root'
 })
-export class AdminGuardService {
+export class AdminGuardService implements CanActivate {
 
-  constructor(private authService: AngularFireAuth, private router: Router) { }
+  constructor(private authService: AngularFireAuth,
+    private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const user = this.authService.auth.currentUser;

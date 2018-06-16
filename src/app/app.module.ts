@@ -1,10 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
-import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireDatabaseModule, AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatToolbarModule,
@@ -31,6 +32,8 @@ import { MatchListComponent } from './home/match-list/match-list.component';
 import { PipeModule } from './pipe/pipe.module';
 import { ScoreService } from './score.service';
 import { DeleteUserComponent } from './delete-user/delete-user.component';
+import { Match } from './model/match';
+import { RootObject } from './model/fifa';
 
 @NgModule({
   declarations: [
@@ -46,6 +49,7 @@ import { DeleteUserComponent } from './delete-user/delete-user.component';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    HttpClientModule,
     AngularFireModule.initializeApp(bdd.firebase),
     AngularFireAuthModule,
     AngularFireDatabaseModule,
@@ -70,7 +74,7 @@ import { DeleteUserComponent } from './delete-user/delete-user.component';
     {
       provide: APP_INITIALIZER,
       useFactory: boot,
-      deps: [AngularFireAuth],
+      deps: [AngularFireAuth, AngularFireDatabase, HttpClient],
       multi: true
     },
     ScoreService
@@ -79,12 +83,68 @@ import { DeleteUserComponent } from './delete-user/delete-user.component';
 })
 export class AppModule { }
 
-export function boot(authService: AngularFireAuth): Function {
+export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http: HttpClient): Function {
   return () => {
     return new Promise((resolve, reject) => {
       authService.user.subscribe(user => {
         resolve();
+        if (user && user.email === bdd.admin) {
+          const matches: Match[] = [];
+          db.list('match')
+            .snapshotChanges()
+            .subscribe(changes => {
+              changes.forEach(action => {
+                const match = action.payload.val() as Match;
+                match.date = new Date(match.date);
+                match.id = action.key;
+                matches.push(match);
+              });
+            });
+
+          setInterval(() => {
+            const now = new Date();
+            const currents = matches.filter(m => m.date <= now && !m.finished);
+            if (currents.length > 0) {
+              http.get('https://api.fifa.com/api/v1/live/football/now?language=fr-FR')
+              .subscribe((data: RootObject) => {
+                if (data && data.Results) {
+                  if (data.Results.length === 0) {
+                    currents.forEach(m => {
+                      m.finished = true;
+                      update(m);
+                    });
+                    return;
+                  }
+                  const results = data.Results;
+                  results.forEach(result => {
+                    const match = currents.find(m => m.result1.teamId === result.HomeTeam.TeamName[0].Description);
+                    if (match) {
+                      if (result.HomeTeam.Score !== match.result1.score) {
+                        match.result1.score = result.HomeTeam.Score;
+                        update(match);
+                      }
+                      if (result.AwayTeam.Score !== match.result2.score) {
+                        match.result2.score = result.AwayTeam.Score;
+                        update(match);
+                      }
+                    }
+                  });
+                }
+              }, e => {
+                console.error(e);
+              });
+            }
+          }, 10000);
+        }
       });
     });
   };
+
+  async function update(match: Match) {
+    try {
+      await db.list('match').update(match.id, match);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
