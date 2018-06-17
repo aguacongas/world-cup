@@ -183,17 +183,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.bets = [];
     }
+    this.matches = [];
     this.db
       .list('match')
       .snapshotChanges()
       .subscribe(changes => {
-        this.matches = [];
         changes.forEach(action => {
-          if (!this.matches.find(m => m.id === action.key)) {
-            const match = action.payload.val() as Match;
-            match.date = new Date(match.date);
-            match.id = action.key;
-            this.matches.push(match);
+          if (action.type === 'value') {
+            if (!this.matches.find(m => m.id === action.key)) {
+              const match = action.payload.val() as Match;
+              match.date = new Date(match.date);
+              match.id = action.key;
+              this.matches.push(match);
+            }
+          } else if (action.type === 'child_changed') {
+            const index = this.matches.findIndex(m => m.id === action.key);
+            if (index > -1) {
+              const match = action.payload.val() as Match;
+              match.date = new Date(match.date);
+              match.id = action.key;
+              this.matches[index] = match;
+            }
           }
         });
         this.merge();
