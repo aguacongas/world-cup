@@ -167,7 +167,6 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
     n.onclick = () => {
       n.close.bind(n);
     };
-    setTimeout(n.close.bind(n), 5000);
   }
 
   function autoupdate() {
