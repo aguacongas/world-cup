@@ -52,7 +52,8 @@ export class MatchListComponent implements OnInit, AfterViewChecked {
       try {
         const dayElement = document.querySelector('#day' + (index));
         if (dayElement) {
-          dayElement.scrollIntoView();
+          dayElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+          // document.body.scrollTo({top: dayElement.getBoundingClientRect().top - 56});
         }
         this.scrolledToDate = true;
       } catch (e) {
