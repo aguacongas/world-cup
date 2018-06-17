@@ -1,6 +1,6 @@
 <mat-grid-list cols="1">
-  <mat-list-item *ngFor="let date of dates">
-    <div class="container">
+  <mat-list-item *ngFor="let date of dates; index as i">
+    <div class="container" [id]="'day' + i">
       <div class="row justify-content-center">
         <div class="col-12 col-md-2">
           {{ date | date }}

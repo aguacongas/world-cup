@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { element } from 'protractor';
+import { Component, OnInit, Input, AfterViewChecked } from '@angular/core';
 
 import { Match } from '../../model/match';
 import { UserBet } from '../model/user-bet';
@@ -9,7 +10,7 @@ import { ScoreService } from './../../score.service';
   templateUrl: './match-list.component.html',
   styleUrls: ['./match-list.component.css']
 })
-export class MatchListComponent implements OnInit {
+export class MatchListComponent implements OnInit, AfterViewChecked {
   @Input() day: string;
   @Input() set userBets(bets: UserBet[]) {
     if (!bets) {
@@ -33,11 +34,31 @@ export class MatchListComponent implements OnInit {
   dates: Date[] = [];
 
   private bets: UserBet[];
+  private scrolledToDate = false;
 
   constructor(private scoreService: ScoreService) {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewChecked() {
+    if (!this.bets || this.scrolledToDate) {
+      return;
+    }
+    const now = new Date();
+    const index = this.dates.findIndex(d => d.getDate() === now.getDate());
+    if (index > -1) {
+      try {
+        const dayElement = document.querySelector('#day' + (index));
+        if (dayElement) {
+          dayElement.scrollIntoView();
+        }
+        this.scrolledToDate = true;
+      } catch (e) {
+        console.error(e);
+       }
+    }
   }
 
   getMatches(date: Date): UserBet[] {

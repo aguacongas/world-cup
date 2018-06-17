@@ -86,13 +86,16 @@ export class AppModule { }
 export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http: HttpClient): Function {
   const matches: Match[] = [];
   return () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       authService.user.subscribe(user => {
         resolve();
         db.list('match')
           .snapshotChanges()
           .subscribe(changes => {
             changes.forEach(action => {
+              if (action.type !== 'value') {
+                return;
+              }
               const match = action.payload.val() as Match;
               if (!matches.find(m => m.id === action.key)) {
                 match.date = new Date(match.date);
