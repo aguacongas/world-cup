@@ -144,8 +144,11 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
               } else {
                 notify('C\'est fini', message);
               }
-            } else if (match.result1.score || match.result2.score) {
+            } else if (match.result1.score || match.result2.score
+              && (match.result1.score !== found.result1.score || match.result2.score !== found.result2.score)) {
               message = message + `\n${match.result1.score} - ${match.result2.score}`;
+              found.result1.score = match.result1.score;
+              found.result2.score = match.result2.score;
               notify('Gooooal', message);
             }
           }
