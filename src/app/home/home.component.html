@@ -21,8 +21,8 @@
       </div>
     </div>
     <mat-card-content>
-      <mat-tab-group>
-        <mat-tab *ngFor="let day of days" [label]="day">
+      <mat-tab-group [selectedIndex]="selectDayIndex">
+        <mat-tab *ngFor="let day of days" [label]="day" >
           <div class="container">
             <wc-match-list [day]="day" [userBets]="userBets"></wc-match-list>
           </div>

@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     '3e place',
     'Finale'
   ];
+  selectDayIndex = 0;
   providers: Provider[] = [
     {
       id: 'google.com',
@@ -190,6 +191,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         changes.forEach(action => {
           if (!this.matches.find(m => m.id === action.key)) {
             const match = action.payload.val() as Match;
+            match.date = new Date(match.date);
             match.id = action.key;
             this.matches.push(match);
           }
@@ -216,5 +218,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         point: undefined
       };
     });
+
+    const now = new Date();
+    const matchToDay = this.matches.find(m => m.date.getDate() >= now.getDate()
+      && m.date.getMonth() >= now.getMonth());
+    if (matchToDay) {
+      this.selectDayIndex = this.days.findIndex(d => d === matchToDay.day);
+    }
   }
 }
