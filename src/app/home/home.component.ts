@@ -230,8 +230,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
 
     const now = new Date();
-    const matchToDay = this.matches.find(m => m.date.getDate() >= now.getDate()
-      && m.date.getMonth() >= now.getMonth());
+    const matchToDay = this.matches.find(m => m.date >= now);
     if (matchToDay) {
       this.selectDayIndex = this.days.findIndex(d => d === matchToDay.day);
     }
