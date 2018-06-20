@@ -87,7 +87,7 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
   const matches: Match[] = [];
   return () => {
     return new Promise((resolve) => {
-      authService.user.subscribe(user => {
+      const subscription = authService.user.subscribe(user => {
         resolve();
         db.list('match')
           .snapshotChanges()
@@ -103,6 +103,7 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
                 matches.push(match);
               }
             });
+            subscription.unsubscribe();
           });
 
         if (window && window['Notification']) {
@@ -171,7 +172,7 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
 
   function autoupdate() {
     const now = new Date();
-    const currents = matches.filter(m => m.date <= now && !m.finished);
+    const currents = matches.filter(m => m.date <= now && !m.finished );
     if (currents.length > 0) {
       http.get('https://api.fifa.com/api/v1/live/football/now?language=fr-FR')
         .subscribe((data: RootObject) => {
@@ -180,22 +181,26 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
             results.forEach(result => {
               const match = currents.find(m => m.result1.teamId === result.HomeTeam.TeamName[0].Description);
               if (match) {
-                match.finished = false;
+                if (match.finished === undefined) {
+                  match.finished = false;
+                  update(match.id, 'finished', false);
+                }
+
                 if (result.HomeTeam.Score !== match.result1.score) {
                   match.result1.score = result.HomeTeam.Score;
-                  update(match);
+                  update(`${match.id}/result1`, 'score', match.result1.score);
                 }
                 if (result.AwayTeam.Score !== match.result2.score) {
                   match.result2.score = result.AwayTeam.Score;
-                  update(match);
+                  update(`${match.id}/result2`, 'score', match.result2.score);
                 }
               }
             });
-            const finished = currents.find(m => m.finished === false
+            const finished = currents.find(m => !m.finished
               && results.findIndex(r => r.HomeTeam.TeamName[0].Description === m.result1.teamId) === -1);
             if (finished) {
               finished.finished = true;
-              update(finished);
+              update(finished.id, 'finished', true);
             }
           }
         }, e => {
@@ -204,9 +209,9 @@ export function boot(authService: AngularFireAuth, db: AngularFireDatabase, http
     }
   }
 
-  async function update(match: Match) {
+  async function update(path: string, field: string, value: any) {
     try {
-      await db.list('match').update(match.id, match);
+      await db.list(`match/${path}`).set(field, value);
     } catch (e) {
       console.error(e);
     }

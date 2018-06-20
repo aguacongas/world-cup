@@ -197,12 +197,16 @@ export class HomeComponent implements OnInit, OnDestroy {
               this.matches.push(match);
             }
           } else if (action.type === 'child_changed') {
-            const index = this.matches.findIndex(m => m.id === action.key);
-            if (index > -1) {
+            const oldValue = this.matches.find(m => m.id === action.key);
+            if (oldValue) {
               const match = action.payload.val() as Match;
               match.date = new Date(match.date);
               match.id = action.key;
-              this.matches[index] = match;
+              for(const key  in match) {
+                if (match.hasOwnProperty(key)) {
+                  oldValue[key] = match[key];
+                }
+              }
             }
           }
         });
