@@ -47,16 +47,14 @@ export class NotifyService {
                 this.notify('C\'est fini', message);
               }
             } else if (
-              match.result1.score ||
-              (match.result2.score &&
-                (match.result1.score !== found.result1.score ||
-                  match.result2.score !== found.result2.score))
-            ) {
-              message =
-                message + `\n${match.result1.score} - ${match.result2.score}`;
-              found.result1.score = match.result1.score;
-              found.result2.score = match.result2.score;
-              this.notify('Gooooal', message);
+              (match.result1.score || match.result2.score) &&
+              (match.result1.score !== found.result1.score ||
+                match.result2.score !== found.result2.score)) {
+                message =
+                  message + `\n${match.result1.score} - ${match.result2.score}`;
+                found.result1.score = match.result1.score;
+                found.result2.score = match.result2.score;
+                this.notify('Gooooal', message);
             }
           }
         });
