@@ -60,7 +60,7 @@ export class UpdateService {
                 }
               }
             });
-            const finished = currents.find(m => !m.finished
+            const finished = currents.find(m => !m.finished && new Date(m.date.getHours() + 1) < now
               && results.findIndex(r => r.HomeTeam.TeamName[0].Description === m.result1.teamId) === -1);
             if (finished) {
               this.update(finished.id, 'finished', true);
