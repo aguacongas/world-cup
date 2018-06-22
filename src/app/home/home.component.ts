@@ -202,13 +202,21 @@ export class HomeComponent implements OnInit, OnDestroy {
               const match = action.payload.val() as Match;
               match.date = new Date(match.date);
               match.id = action.key;
-              for(const key  in match) {
+              for (const key  in match) {
                 if (match.hasOwnProperty(key)) {
                   oldValue[key] = match[key];
                 }
               }
             }
           }
+        });
+        this.matches.sort((a, b) => {
+          if (a.date > b.date) {
+            return 1;
+          } else if (a.date < b.date) {
+            return -1;
+          }
+          return 0;
         });
         this.merge();
       });
