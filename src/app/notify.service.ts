@@ -44,6 +44,8 @@ export class NotifyService {
               if (match.finished === false) {
                 this.notify('C\'est partit', message);
               } else {
+                message =
+                  message + `\n${match.result1.score} - ${match.result2.score}`;
                 this.notify('C\'est fini', message);
               }
             } else if (
