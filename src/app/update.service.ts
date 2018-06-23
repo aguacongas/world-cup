@@ -18,11 +18,9 @@ export class UpdateService {
       .snapshotChanges()
       .subscribe(changes => {
         changes.forEach(action => {
-          if (action.type !== 'value') {
-            return;
-          }
           const match = action.payload.val() as Match;
-          if (!this.matches.find(m => m.id === action.key)) {
+          const exist = this.matches.find(m => m.id === action.key);
+          if (!exist) {
             match.date = new Date(match.date);
             match.id = action.key;
             this.matches.push(match);
@@ -60,7 +58,8 @@ export class UpdateService {
                 }
               }
             });
-            const finished = currents.find(m => !m.finished && new Date(m.date.getHours() + 1) < now
+            const finished = currents.find(m => !m.finished
+              && new Date(new Date(m.date).setHours(m.date.getHours() + 1)) < now
               && results.findIndex(r => r.HomeTeam.TeamName[0].Description === m.result1.teamId) === -1);
             if (finished) {
               this.update(finished.id, 'finished', true);
