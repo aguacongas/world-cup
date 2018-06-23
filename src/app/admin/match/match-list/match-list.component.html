@@ -7,16 +7,27 @@
         <mat-list-item matLine *ngFor="let match of getMatches(day)">
           <form matLine #form="ngForm" (ngSubmit)="submit(match)">
             <mat-form-field>
-              <input matInput [value]="match.date | date" placeholder="Date" name="date" disabled />
+              <input matInput [(ngModel)]="match.group" placeholder="group" name="group" type="text" />
             </mat-form-field>
             <mat-form-field>
-              <input matInput [value]="match.date.getHours() | time" placeholder="Time" name="time" disabled />
+              <input matInput [matDatepicker]="datepicker" [(ngModel)]="match.date" name="date" placeholder="Date" />
+              <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+              <mat-datepicker #datepicker></mat-datepicker>
             </mat-form-field>
             <mat-form-field>
-              <input matInput [(ngModel)]="match.result1.score" [placeholder]="match.result1.teamId" name="team1" type="number" />
+              <input matInput [value]="match.date.getHours() | time" placeholder="Time" name="time" (change)="setHours(match, $event)" />
             </mat-form-field>
             <mat-form-field>
-              <input matInput [(ngModel)]="match.result2.score" [placeholder]="match.result2.teamId" name="team2" type="number" />
+              <input matInput [(ngModel)]="match.result1.teamId" placeholder="team1" name="team1" type="text" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput [(ngModel)]="match.result1.score" [placeholder]="match.result1.teamId" name="score1" type="number" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput [(ngModel)]="match.result2.teamId" placeholder="team2" name="team2" type="text" type="text" />
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput [(ngModel)]="match.result2.score" [placeholder]="match.result2.teamId" name="score2" type="number" />
             </mat-form-field>
             <button mat-raised-button color="primary" type="submit">Update</button>
           </form>

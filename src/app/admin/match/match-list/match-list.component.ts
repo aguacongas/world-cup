@@ -69,4 +69,8 @@ export class MatchListComponent implements OnInit {
     }
   }
 
+  setHours(match: Match, hours: string): void {
+    const data = hours.split(':');
+    match.date.setHours(+data[0], 0);
+  }
 }
