@@ -63,7 +63,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private bets: Bet[];
   private matches: Match[];
   private setDisplayName = true;
-  subscription: Subscription;
+  private subscription: Subscription;
+  private logged = false;
 
   constructor(
     private authService: AngularFireAuth,
@@ -77,12 +78,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscription = this.authService.user.subscribe(user => {
       this.user = user;
-      if (!user) {
+      if (!user && !this.logged) {
         const authentication = this.authService.auth;
         authentication
           .getRedirectResult()
           .then(result => {
             this.user = result.user as User;
+            this.logged = true;
             this.getData();
           })
           .catch(error => {
@@ -110,6 +112,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       } else {
         this.getData();
       }
+      this.logged = true;
     });
   }
 
