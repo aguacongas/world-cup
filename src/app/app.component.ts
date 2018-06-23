@@ -2,7 +2,6 @@ import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { FirebaseAuth } from 'angularfire2';
 import { MatBottomSheet } from '@angular/material';
 
 import { DeleteUserComponent } from './delete-user/delete-user.component';
