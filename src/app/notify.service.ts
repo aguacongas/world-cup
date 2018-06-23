@@ -29,7 +29,7 @@ export class NotifyService {
 
     this.db
       .list('match')
-      .snapshotChanges()
+      .snapshotChanges(['child_changed'])
       .subscribe(changes => {
         changes.forEach(action => {
           if (action.type !== 'child_changed') {
