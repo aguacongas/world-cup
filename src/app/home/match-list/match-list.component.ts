@@ -1,5 +1,5 @@
-import { element } from 'protractor';
 import { Component, OnInit, Input, AfterViewChecked } from '@angular/core';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 import { Match } from '../../model/match';
 import { UserBet } from '../model/user-bet';
@@ -36,14 +36,14 @@ export class MatchListComponent implements OnInit, AfterViewChecked {
   private bets: UserBet[];
   private scrolledToDate = false;
 
-  constructor(private scoreService: ScoreService) {
+  constructor(private scoreService: ScoreService, private authService: AngularFireAuth) {
   }
 
   ngOnInit() {
   }
 
   ngAfterViewChecked() {
-    if (!this.bets || this.scrolledToDate) {
+    if (!this.authService.auth.currentUser || !this.bets || this.scrolledToDate) {
       return;
     }
     const now = new Date();
