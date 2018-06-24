@@ -10,6 +10,7 @@ import { Match } from '../model/match';
 import { UserBet } from './model/user-bet';
 import { Provider } from './model/provider';
 import { AuthProvider } from '@firebase/auth-types';
+import { Days } from './../days';
 
 @Component({
   selector: 'wc-home',
@@ -17,16 +18,7 @@ import { AuthProvider } from '@firebase/auth-types';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  days = [
-    'Jour 1',
-    'Jour 2',
-    'Jour 3',
-    '1/8',
-    '1/4',
-    '1/2',
-    '3e place',
-    'Finale'
-  ];
+  days = Days;
   selectDayIndex = 0;
   providers: Provider[] = [
     {

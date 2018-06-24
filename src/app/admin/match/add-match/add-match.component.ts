@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { Team } from '../../../model/team';
 import { TimePipeService } from '../../../pipe/time-pipe.service';
+import { Days } from './../../../days';
 
 @Component({
   selector: 'wc-add-match',
@@ -11,16 +12,7 @@ import { TimePipeService } from '../../../pipe/time-pipe.service';
   styleUrls: ['./add-match.component.css']
 })
 export class AddMatchComponent implements OnInit {
-  days = [
-    'Jour 1',
-    'Jour 2',
-    'Jour 3',
-    '1/8',
-    '1/4',
-    '1/2',
-    '3e place',
-    'Finale'
-  ];
+  days = Days;
   time: string;
   times: string[] = [];
   teams: Team[];

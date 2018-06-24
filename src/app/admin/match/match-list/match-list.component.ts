@@ -3,6 +3,7 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { Router } from '@angular/router';
 
 import { Match } from '../../../model/match';
+import { Days } from '../../../days';
 
 @Component({
   selector: 'wc-match-list',
@@ -10,17 +11,7 @@ import { Match } from '../../../model/match';
   styleUrls: ['./match-list.component.css']
 })
 export class MatchListComponent implements OnInit {
-  days = [
-    'Jour 1',
-    'Jour 2',
-    'Jour 3',
-    '1/8',
-    '1/4',
-    '1/2',
-    '3e place',
-    'Finale'
-  ];
-
+  days = Days;
   matches: Match[];
 
   constructor(private db: AngularFireDatabase, private router: Router) {}
