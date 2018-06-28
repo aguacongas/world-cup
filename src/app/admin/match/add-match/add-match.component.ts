@@ -16,7 +16,7 @@ export class AddMatchComponent implements OnInit {
   time: string;
   times: string[] = [];
   teams: Team[];
-  date: any;
+  date: Date;
   day: string;
   team1Id: string;
   team2Id: string;
@@ -56,6 +56,7 @@ export class AddMatchComponent implements OnInit {
     try {
       await this.db.list('match').push({
         date: this.date.toISOString(),
+        sv: { '.sv': 'timestamp' },
         day: this.day,
         result1: {
           teamId: this.team1Id

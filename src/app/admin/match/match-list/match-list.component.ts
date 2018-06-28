@@ -12,8 +12,7 @@ import { Days } from '../../../days';
 })
 export class MatchListComponent implements OnInit {
   days = Days;
-  matches: Match[];
-
+  matches: Match[] = [];
   constructor(private db: AngularFireDatabase, private router: Router) {}
 
   ngOnInit() {
@@ -21,12 +20,20 @@ export class MatchListComponent implements OnInit {
       .list('match')
       .snapshotChanges()
       .subscribe(changes => {
-        this.matches = [];
         changes.forEach(action => {
           const match = action.payload.val() as Match;
           match.date = new Date(match.date);
           match.id = action.key;
-          this.matches.push(match);
+          const oldValue = this.matches.find(m => m.id === action.key);
+          if (!oldValue) {
+            this.matches.push(match);
+          } else {
+            for (const key in match) {
+              if (match.hasOwnProperty(key)) {
+                oldValue[key] = match[key];
+              }
+            }
+          }
         });
       });
   }
@@ -54,7 +61,15 @@ export class MatchListComponent implements OnInit {
 
   async submit(match: Match) {
     try {
-      await this.db.list('match').update(match.id, match);
+      const result1 = match.result1;
+      const result2 = match.result2;
+      await this.db.list('match').update(match.id, {
+        date: match.date.toISOString(),
+        sv: match.date.getTime(),
+        day: match.day,
+        result1: result1,
+        result2: result2
+      });
     } catch (e) {
       console.error(e);
     }
@@ -62,6 +77,6 @@ export class MatchListComponent implements OnInit {
 
   setHours(match: Match, hours: string): void {
     const data = hours.split(':');
-    match.date.setHours(+data[0], 0);
+    match.date.setHours(+data[0], +data[1]);
   }
 }

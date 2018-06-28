@@ -128,16 +128,17 @@ export class HomeComponent implements OnInit, OnDestroy {
           await this.db.list(`bets/${this.user.uid}`).remove(bet.matchId);
           return;
         }
-        const data = {};
-        if (b.match.finished !== undefined) {
+        const data: any = {};
+        if (b.match.finished !== undefined || b.match.date < new Date()) {
           return;
         }
         if (bet.score1 || bet.score1 === 0) {
-          data['score1'] = bet.score1;
+          data.score1 = bet.score1;
         }
         if (bet.score2 || bet.score2 === 0) {
-          data['score2'] = bet.score2;
+          data.score2 = bet.score2;
         }
+        data.date = { '.sv': 'timestamp' };
 
         await this.db.list(`bets/${this.user.uid}`).set(bet.matchId, data);
       });
@@ -170,7 +171,13 @@ export class HomeComponent implements OnInit, OnDestroy {
               bet.score2 ||
               bet.score2 === 0) {
               bet.matchId = action.key;
-              this.bets.push(bet);
+              const oldValue = this.bets.find(b => b.matchId === bet.matchId);
+              if (!oldValue) {
+                this.bets.push(bet);
+              } else {
+                oldValue.score1 = bet.score1;
+                oldValue.score2 = bet.score2;
+              }
               this.setDisplayName = false;
             }
           });
@@ -185,15 +192,15 @@ export class HomeComponent implements OnInit, OnDestroy {
       .snapshotChanges()
       .subscribe(changes => {
         changes.forEach(action => {
+          const oldValue = this.matches.find(m => m.id === action.key);
           if (action.type === 'value') {
-            if (!this.matches.find(m => m.id === action.key)) {
+            if (!oldValue) {
               const match = action.payload.val() as Match;
               match.date = new Date(match.date);
               match.id = action.key;
               this.matches.push(match);
             }
           } else if (action.type === 'child_changed') {
-            const oldValue = this.matches.find(m => m.id === action.key);
             if (oldValue) {
               const match = action.payload.val() as Match;
               match.date = new Date(match.date);
@@ -238,7 +245,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
 
     const now = new Date();
-    const matchToDay = this.matches.find(m => m.date >= now);
+    const matchToDay = this.matches.find(m => (m.date.getDate() === now.getDate() && m.date.getMonth() === now.getMonth())
+      || m.date >= now);
     if (matchToDay) {
       this.selectDayIndex = this.days.findIndex(d => d === matchToDay.day);
     }
