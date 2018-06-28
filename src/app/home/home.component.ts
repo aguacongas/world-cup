@@ -122,15 +122,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.userBets.forEach(async b => {
         const bet = b.bet;
         if (
-          !bet.score1 &&
-          bet.score1 !== 0 &&
-          !bet.score2 &&
-          bet.score2 !== 0
+          (!bet.score1 && bet.score1 !== 0) ||
+          (!bet.score2 && bet.score2 !== 0)
         ) {
           await this.db.list(`bets/${this.user.uid}`).remove(bet.matchId);
           return;
         }
         const data = {};
+        if (b.match.finished !== undefined) {
+          return;
+        }
         if (bet.score1 || bet.score1 === 0) {
           data['score1'] = bet.score1;
         }
