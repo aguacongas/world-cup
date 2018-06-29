@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Router } from '@angular/router';
 
@@ -10,9 +10,11 @@ import { Days } from '../../../days';
   templateUrl: './match-list.component.html',
   styleUrls: ['./match-list.component.css']
 })
-export class MatchListComponent implements OnInit {
+export class MatchListComponent implements OnInit, AfterViewChecked {
   days = Days;
   matches: Match[] = [];
+
+  private scrolledToDate = false;
   constructor(private db: AngularFireDatabase, private router: Router) {}
 
   ngOnInit() {
@@ -36,6 +38,26 @@ export class MatchListComponent implements OnInit {
           }
         });
       });
+  }
+
+  ngAfterViewChecked() {
+    if (this.scrolledToDate) {
+      return;
+    }
+    const now = new Date();
+    const match = this.matches.find(m => m.date.getDate() >= now.getDate());
+    if (match) {
+      const index = this.days.findIndex(d => d === match.day);
+      try {
+        const dayElement = document.querySelector('#day' + (index));
+        if (dayElement) {
+          dayElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        this.scrolledToDate = true;
+      } catch (e) {
+        console.error(e);
+       }
+    }
   }
 
   navigate(to: string): void {

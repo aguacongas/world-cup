@@ -1,7 +1,7 @@
 <wc-add-match></wc-add-match>
 <mat-grid-list cols="1">
-  <mat-list-item *ngFor="let day of days">
-    <div>
+  <mat-list-item *ngFor="let day of days; index as i">
+    <div [id]="'day' + i">
       {{ day }}
       <mat-grid-list cols="1">
         <mat-list-item matLine *ngFor="let match of getMatches(day)">
