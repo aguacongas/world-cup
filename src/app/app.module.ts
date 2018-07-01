@@ -33,7 +33,6 @@ import { MatchListComponent } from './home/match-list/match-list.component';
 import { PipeModule } from './pipe/pipe.module';
 import { ScoreService } from './score.service';
 import { DeleteUserComponent } from './delete-user/delete-user.component';
-import { Match } from './model/match';
 import { UpdateService } from './update.service';
 import { NotifyService } from './notify.service';
 
