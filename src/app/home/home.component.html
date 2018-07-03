@@ -13,7 +13,7 @@
           <p *ngIf="!loginError">
             Connecte toi avec:
           </p>
-          <button *ngFor="let provider of providers" mat-raised-button color="primary" (click)="login(provider.authProvider)" [disabled]="provider.disabled">{{ provider.name }}</button>
+          <button *ngFor="let provider of providers" type="button" mat-raised-button color="primary" (click)="login(provider.authProvider)" [disabled]="provider.disabled">{{ provider.name }}</button>
         </div>
       </div>
       <div class="col-6 col-md-2" *ngIf="user">

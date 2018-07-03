@@ -4,6 +4,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { auth } from 'firebase/app';
 import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material';
 
 import { Bet } from '../model/bet';
 import { Match } from '../model/match';
@@ -60,7 +61,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AngularFireAuth,
-    private db: AngularFireDatabase
+    private db: AngularFireDatabase,
+    private snackBar: MatSnackBar
   ) {
     this.isIe =
       window.navigator.userAgent.indexOf('MSIE ') > 0 ||
@@ -142,8 +144,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         await this.db.list(`bets/${this.user.uid}`).set(bet.matchId, data);
       });
+
+      this.snackBar.open('Pronostics enregistré', undefined, { duration: 2000 });
     } catch (e) {
       console.error(e);
+      this.snackBar.open(`${e.message}`, 'erreur', { duration: 3000, panelClass: 'text-danger' });
     }
 
     if (this.setDisplayName) {

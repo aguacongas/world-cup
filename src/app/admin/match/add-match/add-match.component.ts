@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material';
 
 import { Team } from '../../../model/team';
 import { TimePipeService } from '../../../pipe/time-pipe.service';
@@ -21,7 +21,9 @@ export class AddMatchComponent implements OnInit {
   team1Id: string;
   team2Id: string;
 
-  constructor(private db: AngularFireDatabase, private router: Router, private timePipeService: TimePipeService) {}
+  constructor(private db: AngularFireDatabase,
+    private timePipeService: TimePipeService,
+    private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.db
@@ -64,9 +66,10 @@ export class AddMatchComponent implements OnInit {
           teamId: this.team2Id
         }
       });
-      this.router.navigate(['admin/match']);
+      this.snackBar.open(`Match ajouté ${this.team1Id} - ${this.team2Id}`, undefined, { duration: 2000 });
     } catch (e) {
       console.error(e);
+      this.snackBar.open(`${e.message}`, 'erreur', { duration: 3000, panelClass: 'text-danger' });
     }
   }
 }

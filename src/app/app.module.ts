@@ -21,7 +21,8 @@ import {
   MatGridListModule,
   MatFormFieldModule,
   MatInputModule,
-  MatBottomSheetModule
+  MatBottomSheetModule,
+  MatSnackBarModule
 } from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -67,6 +68,7 @@ import { NotifyService } from './notify.service';
     MatFormFieldModule,
     MatInputModule,
     MatBottomSheetModule,
+    MatSnackBarModule,
     PipeModule
   ],
   providers: [

@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewChecked } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material';
 
 import { Match } from '../../../model/match';
 import { Days } from '../../../days';
@@ -15,7 +16,9 @@ export class MatchListComponent implements OnInit, AfterViewChecked {
   matches: Match[] = [];
 
   private scrolledToDate = false;
-  constructor(private db: AngularFireDatabase, private router: Router) {}
+  constructor(private db: AngularFireDatabase,
+    private router: Router,
+    private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.db
@@ -92,8 +95,10 @@ export class MatchListComponent implements OnInit, AfterViewChecked {
         result1: result1,
         result2: result2
       });
+      this.snackBar.open(`Match mis à jour ${match.result1.teamId} - ${match.result2.teamId}`, undefined, { duration: 2000 });
     } catch (e) {
       console.error(e);
+      this.snackBar.open(`${e.message}`, 'erreur', { duration: 3000, panelClass: 'text-danger' });
     }
   }
 

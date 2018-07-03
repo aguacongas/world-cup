@@ -3,12 +3,12 @@ import { User } from 'firebase';
 import { Subscription } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { MatSnackBar } from '@angular/material';
 
 import { Ranking } from '../model/ranking';
 import { Match } from '../../model/match';
 import { Bet } from '../../model/bet';
 import { ScoreService } from '../../score.service';
-import { del } from 'selenium-webdriver/http';
 
 @Component({
   selector: 'wc-ranking',
@@ -25,7 +25,8 @@ export class RankingComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AngularFireAuth,
     private db: AngularFireDatabase,
-    private calcService: ScoreService
+    private calcService: ScoreService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -115,8 +116,10 @@ export class RankingComponent implements OnInit, OnDestroy {
       await this.db
         .list(`bets/${this.user.uid}`)
         .set('displayName', this.displayName);
+      this.snackBar.open('Pseudo enregistré', undefined, { duration: 2000 });
     } catch (e) {
       console.error(e);
+      this.snackBar.open(`${e.message}`, 'erreur', { duration: 3000, panelClass: 'text-danger' });
     }
   }
 }
