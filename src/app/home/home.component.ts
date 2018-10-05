@@ -123,6 +123,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     try {
       this.userBets.forEach(async b => {
         const bet = b.bet;
+        const match = b.match;
         if (
           (!bet.score1 && bet.score1 !== 0) ||
           (!bet.score2 && bet.score2 !== 0)
@@ -131,7 +132,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           return;
         }
         const data: any = {};
-        if (b.match.finished !== undefined || b.match.date < new Date()) {
+        if (match.finished !== undefined || match.date < new Date()) {
           return;
         }
         if (bet.score1 || bet.score1 === 0) {
